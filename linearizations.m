@@ -70,9 +70,6 @@ for i=1:6
 end
 
 U=[s;Mom];
-
-
-
 I=[Ixx -Ixy -Ixz; -Ixy Iyy -Iyz; -Ixz -Iyz Izz];
 Iprime=R*I*R.';
 M=[[m 0 0; 0 m 0; 0 0 m],zeros(3,3); zeros(3,3),Iprime];
@@ -86,17 +83,16 @@ c65=-c56;
 C=[zeros(3,6); zeros(3,3), [0, c45 c46; c54 0 c56; c64 c65 0]];
 F=[f1;f2;f3;f4;f5;f6];
 N=[fex; fey; fez+g; tauex; tauey; tauez];
+
 %% Equation for accelerations [tx;ty;tx;thetax; thetay; thetaz]''
-
 eq=inv(M)*(U*F-C*[txd;tyd;tzd;wx;wy;wz]);
-
 
 %% Linearization
 % For Jacobian
 linEq=jacobian(eq,[tx ty tz thetax thetay thetaz txd tyd tzd wx wy wz F.']);
 
 %Find initial equilibrium forces
-tx=0; ty=0; tz=0; thetax=0; thetay=0; thetaz=0; txd=0; tyd=0; tzd=0; wx=0; wy=0; wz=0; Ixx=1; Iyy=1; Izz=1;
+tx=0; ty=0; tz=0; thetax=0; thetay=pi/3; thetaz=pi/6; txd=0; tyd=0; tzd=0; wx=0; wy=0; wz=0; Ixx=1; Iyy=1; Izz=1;
 Ixy=0; Ixz=0; Iyx=0; Iyz=0; Izx=0; Izy=0;
 U0=subs(U);
 F0=inv(U0)*[0;0;m*g;0;0;0];

@@ -92,7 +92,7 @@ eq=inv(M)*(U*F-C*[txd;tyd;tzd;wx;wy;wz]);
 linEq=jacobian(eq,[tx ty tz thetax thetay thetaz txd tyd tzd wx wy wz F.']);
 
 %Find initial equilibrium forces
-tx=0; ty=0; tz=0; thetax=0; thetay=pi/3; thetaz=pi/6; txd=0; tyd=0; tzd=0; wx=0; wy=0; wz=0; Ixx=1; Iyy=1; Izz=1;
+tx=0; ty=0; tz=0; thetax=0; thetay=0; thetaz=0; txd=0; tyd=0; tzd=0; wx=0; wy=0; wz=0; Ixx=1; Iyy=1; Izz=1;
 Ixy=0; Ixz=0; Iyx=0; Iyz=0; Izx=0; Izy=0;
 U0=subs(U);
 F0=inv(U0)*[0;0;m*g;0;0;0];

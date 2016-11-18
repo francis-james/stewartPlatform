@@ -33,7 +33,7 @@ display('Huzzah! It''s controllable');
 %% From the P matrix, mu1=mu2=...=mu6=2
 M=[P(:,1),P(:,7),P(:,2),P(:,8),P(:,3),P(:,9),P(:,4),P(:,10),P(:,5),P(:,11),P(:,6),P(:,12)];
 Minv=inv(M);
-T=[M(2,:);M(2,:)*A;M(4,:);M(4,:)*A;M(6,:);M(6,:)*A;M(8,:);M(8,:)*A;M(10,:);M(10,:)*A;M(12,:);M(12,:)*A];
+T=[Minv(2,:);Minv(2,:)*A;Minv(4,:);Minv(4,:)*A;Minv(6,:);Minv(6,:)*A;Minv(8,:);Minv(8,:)*A;Minv(10,:);Minv(10,:)*A;Minv(12,:);Minv(12,:)*A];
 
 Acanon=T*A*inv(T);
 Bcanon=T*B;

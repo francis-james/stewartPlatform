@@ -52,7 +52,7 @@ BallX=Ball(1,:);
 BallY=Ball(2,:);
 BallZ=Ball(3,:);
 hold on;
-plot3(BallX,BallY,BallZ)
+plot3(BallX,BallY,BallZ);
 
 for i=1:6
     X=[pPall(1,i),Ball(1,i)];

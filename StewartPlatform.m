@@ -120,14 +120,21 @@ classdef StewartPlatform
           B = AB(:,19:end);
       end
       
-      function plot(obj,x)
+      function plot(obj,x, fig, axs)
           
-          
+          if ~exist('fig','var')
+                fig=figure();
+          end
+
+          if ~exist('axs','var')
+                axs=gca;
+          end
+            
           BallX=[obj.pB_b(1,:),obj.pB_b(1,1)];
           BallY=[obj.pB_b(2,:),obj.pB_b(2,1)];
           BallZ=[obj.pB_b(3,:),obj.pB_b(3,1)];
           
-          plot3(BallX,BallY,BallZ)
+          plot3(BallX,BallY,BallZ, 'Parent',axs)
           for i=1:6
               BP(:,i) = x(1:3,1) + obj.get_R(x(4:6,1))*obj.pP_p(:,i);
           end
@@ -142,7 +149,7 @@ classdef StewartPlatform
           pPallX=[BP(1,:),BP(1,1)];
           pPallY=[BP(2,:),BP(2,1)];
           pPallZ=[BP(3,:),BP(3,1)];
-          plot3(pPallX,pPallY,pPallZ)
+          plot3(pPallX,pPallY,pPallZ,'Parent',axs)
           
           xlim([-1.5 1.5])
           ylim([-1.5 1.5])

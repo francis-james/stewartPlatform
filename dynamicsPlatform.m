@@ -1,23 +1,32 @@
-function res=dynamicsPlatform(t,state,stewart)
+function res=dynamicsPlatform(t,state,stewart,F0)
 %% Dynamics for a stewart platform
 %%state=[tx ty tz thetax thetay thetaz txd tyd tzd wx wy wz]
-
-Fe=[0;0;1];
+% state=zeros(12,1);
+% stewart=StewartPlatform(state);
+Fe=[0;0;0];
 Fp=[0;0;0];
 stewart.x=state;
-M1=stewart.get_H(stewart.x);
-C1=stewart.get_C(stewart.x);
-U1=stewart.get_U(stewart.x);
+H=stewart.get_H(stewart.x);
+C=stewart.get_C(stewart.x);
+U=stewart.get_U(stewart.x);
 G=stewart.get_G(stewart.x,Fe,Fp);
 
-% F=controlInput(t,state);
-% N=externalForce(t,state);
-% xd=[txd;tyd;tzd;wx;wy;wz];
-% xdd=inv(M)*(U*F-N-c*xd);
-% res=[x;xdd];
+t=0;
+F=controlInput(t,state,stewart);
+
+txd=state(7);
+tyd=state(8);
+tzd=state(9);
+wx=state(10);
+wy=state(11);
+wz=state(12);
+
+xd=[txd;tyd;tzd;wx;wy;wz];
+xdd=inv(H)*(U*(F+F0)-G-C*xd);
+res=[xd;xdd];
+
 
 %% Old code for comparisons/verification
-
 
 % state=zeros(12,1);
 % N=external force applied to platform

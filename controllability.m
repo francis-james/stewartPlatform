@@ -39,8 +39,8 @@ T=[Minv(2,:);Minv(2,:)*A;Minv(4,:);Minv(4,:)*A;Minv(6,:);Minv(6,:)*A;Minv(8,:);M
 Abar=T*A*inv(T);
 Bbar=T*B;
 
-Asubdes=[0 1; -25 -10]; %placing poles at -5,-5 for each subsystem
-Adesired=Abar;
+Asubdes=[0 1; -6 -5]; %placing poles at -5,-5 for each subsystem
+Adesired=zeros(size(A));
 startInd=1; endInd=startInd+mu(1)-1;
 for i=1:length(mu)
     Adesired(startInd:endInd,startInd:endInd)=Asubdes;

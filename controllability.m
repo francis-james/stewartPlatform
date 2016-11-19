@@ -31,9 +31,23 @@ end
 
 display('Huzzah! It''s controllable');
 %% From the P matrix, mu1=mu2=...=mu6=2
+mu=[2;2;2;2;2;2];
 M=[P(:,1),P(:,7),P(:,2),P(:,8),P(:,3),P(:,9),P(:,4),P(:,10),P(:,5),P(:,11),P(:,6),P(:,12)];
 Minv=inv(M);
 T=[Minv(2,:);Minv(2,:)*A;Minv(4,:);Minv(4,:)*A;Minv(6,:);Minv(6,:)*A;Minv(8,:);Minv(8,:)*A;Minv(10,:);Minv(10,:)*A;Minv(12,:);Minv(12,:)*A];
 
-Acanon=T*A*inv(T);
-Bcanon=T*B;
+Abar=T*A*inv(T);
+Bbar=T*B;
+
+Asubdes=[0 1; -25 -10]; %placing poles at -5,-5 for each subsystem
+Adesired=Abar;
+startInd=1; endInd=startInd+mu(1)-1;
+for i=1:length(mu)
+    Adesired(startInd:endInd,startInd:endInd)=Asubdes;
+    if i+1<=length(mu)
+        startInd=startInd+mu(i);
+        endInd=startInd+mu(i+1)-1;
+    end
+end
+Kbar=pinv(Bbar)*(Adesired-Abar);
+K=Kbar*T;

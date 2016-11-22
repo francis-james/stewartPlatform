@@ -3,7 +3,7 @@ function res=dynamicsPlatform(t,state,stewart,F0)
 %%state=[tx ty tz thetax thetay thetaz txd tyd tzd wx wy wz]
 % state=zeros(12,1);
 % stewart=StewartPlatform(state);
-Fe=[0;0;0];
+Fe=[0;0;-1];
 Fp=[0;0;0];
 stewart.x=state;
 H=stewart.get_H(stewart.x);
@@ -13,7 +13,7 @@ G=stewart.get_G(stewart.x,Fe,Fp);
 
 t=0;
 F=controlInput(t,state,stewart);
-
+% F=zeros(6,1);
 txd=state(7);
 tyd=state(8);
 tzd=state(9);

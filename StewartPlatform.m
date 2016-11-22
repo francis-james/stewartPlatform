@@ -6,7 +6,7 @@ classdef StewartPlatform
         
         I = eye(3);
         
-        g=-9.806; %acceleration due to gravity
+        g=9.806; %acceleration due to gravity
         m = 1;
         h = 0.1;
         

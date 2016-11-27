@@ -4,7 +4,7 @@ close all
 sp = StewartPlatform(zeros(18,1));
 B0 = sp.get_B(zeros(6,1));
 b = B0(7:12,:);
-u0 = inv(b)*[0;0;-sp.g;0;0;0];  %linearize about point that cancels g, negative sign becuase it's on the other side of the equation in paper
+u0 = inv(b)*[0;0;-9.806;0;0;0];  %linearize about point that cancels g
 %[A,B]=sp.linear_f(zeros(18,1),u0);
 % [A,B]=sp.linear_full_f(zeros(18,1),u0);
 % C = sp.linear_full_h(zeros(18,1));
@@ -18,11 +18,7 @@ u0 = inv(b)*[0;0;-sp.g;0;0;0];  %linearize about point that cancels g, negative 
 % [K,S,E] = lqr(sys,Q,R);
 
 % blah = load('C:\Users\tapgar\Documents\MATLAB\stewartPlatform_francis\stewartPlatform-master\K.mat');
-
-tend=1;
-tstart=0;
-dt = 0.01;
-T=(tend-tstart)/dt+1;
+T=10;
 blah=load('K.mat');
 K = -blah.K;
 
@@ -42,40 +38,32 @@ x = zeros(12,1);
 fe = zeros(6,1);
 
 
-
-
-x_hist = zeros(T,24);
-xe_hist = zeros(T,18);
-link_forces = zeros(T,6);
+dt = 0.01;
+N=floor(T/dt);
+t=(0:dt:T);
+x_hist = zeros(N,18);
+xe_hist = zeros(N,18);
+xode_hist=[];
+link_forces = zeros(N,6);
 xm = x;
 
-while tstart<tend
-    
-    t=tstart;
-    ind=floor(t*100)+1;
-    fe(4,1) = 1*sin(t*0.01);
-    
-    fe(1:3,1) = zeros(3,1);
-    if (t > 0.3)
-        fe(1,1) = 1.0+ randn(1)*0.01;
-        fe(2,1) = -0.5 + randn(1)*0.01;
-        fe(3,1) = -10.0+ randn(1)*0.01;
-    end
+for i = 1:1:N
+    fe=getFe(t(i));
     %u = zeros(6,1);
     u = -K*xm + u0;
-    link_forces(ind,:) = u';
+    link_forces(i,:) = u';
+    [time,xode]=ode45(@(t,y)dynamicsPlatform(t,y,u,sp),[t(i) t(i)+dt],[x;fe]);
 %     xd = sp.f([x;fe],u);
 %     x = x + xd(1:12,1)*dt;
-% Replace with ode45 running for dt
-    [Ttemp,Ytemp]=ode45(@(t,y)dynamicsPlatform(t,y,u,sp), [tstart, tstart+0.01], sp.x);
-    sp.x=Ytemp(end,:);
-    t=Ttemp(end);
+    x=xode(end,1:12).';
+    xode_hist=[xode_hist;xode(end,1:12),fe.'];
+
     z = sp.SimulateMeasurement([x;fe]);
     sp = sp.UpdateEKF(u,z,dt);
-    x_hist(ind,:) = [sp.x,fe.'];
-    xe_hist(ind,:) = sp.xest';
+    x_hist(i,:) = [x;fe]';
+    xe_hist(i,:) = sp.xest';
     xm = sp.xest(1:12,1);
-    tstart=t;
+    
     tau = sp.get_Torque(sp.xest);
     u0 = -inv(b)*[-sp.xest(13,1);-sp.xest(14,1);-sp.xest(15,1)-9.806;-tau];
     
@@ -88,55 +76,55 @@ for i = 1:10:length(x_hist)
     pause(0.05)
 end
 
-t = linspace(0,10,T);
+i = linspace(0,10,N);
 
 figure;
 subplot(2,1,1)
-plot(t,x_hist(:,1),'b-.')
+plot(i,x_hist(:,1),'b-.')
 hold on
-plot(t,x_hist(:,2),'r-.')
-plot(t,x_hist(:,3),'g-.')
-plot(t,xe_hist(:,1),'b')
-plot(t,xe_hist(:,2),'r')
-plot(t,xe_hist(:,3),'g')
+plot(i,x_hist(:,2),'r-.')
+plot(i,x_hist(:,3),'g-.')
+plot(i,xe_hist(:,1),'b')
+plot(i,xe_hist(:,2),'r')
+plot(i,xe_hist(:,3),'g')
 legend('x','y','z','xe','ye','ze')
 
 subplot(2,1,2)
-plot(t,x_hist(:,4),'b-.')
+plot(i,x_hist(:,4),'b-.')
 hold on
-plot(t,x_hist(:,5),'r-.')
-plot(t,x_hist(:,6),'g-.')
-plot(t,xe_hist(:,4),'b')
-plot(t,xe_hist(:,5),'r')
-plot(t,xe_hist(:,6),'g')
+plot(i,x_hist(:,5),'r-.')
+plot(i,x_hist(:,6),'g-.')
+plot(i,xe_hist(:,4),'b')
+plot(i,xe_hist(:,5),'r')
+plot(i,xe_hist(:,6),'g')
 legend('px','py','pz','pxe','pye','pze')
 
 figure;
 subplot(2,1,1)
-plot(t,x_hist(:,13),'b-.')
+plot(i,x_hist(:,13),'b-.')
 hold on
-plot(t,x_hist(:,14),'r-.')
-plot(t,x_hist(:,15),'g-.')
-plot(t,xe_hist(:,13),'b')
-plot(t,xe_hist(:,14),'r')
-plot(t,xe_hist(:,15),'g')
+plot(i,x_hist(:,14),'r-.')
+plot(i,x_hist(:,15),'g-.')
+plot(i,xe_hist(:,13),'b')
+plot(i,xe_hist(:,14),'r')
+plot(i,xe_hist(:,15),'g')
 legend('fx','fy','fz','fxe','fye','fze')
 
 subplot(2,1,2)
-plot(t,x_hist(:,16),'b-.')
+plot(i,x_hist(:,16),'b-.')
 hold on
-plot(t,x_hist(:,17),'r-.')
-plot(t,x_hist(:,18),'g-.')
-plot(t,xe_hist(:,16),'b')
-plot(t,xe_hist(:,17),'r')
-plot(t,xe_hist(:,18),'g')
+plot(i,x_hist(:,17),'r-.')
+plot(i,x_hist(:,18),'g-.')
+plot(i,xe_hist(:,16),'b')
+plot(i,xe_hist(:,17),'r')
+plot(i,xe_hist(:,18),'g')
 legend('Tx','Ty','Tz','Txe','Tye','Tze')
 
 figure;
-plot(t,link_forces)
+plot(i,link_forces)
 
 figure;
-plot(t,x_hist(:,7:12))
+plot(i,x_hist(:,7:12))
 
 hold on
-plot(t,xe_hist(:,7:12))
+plot(i,xe_hist(:,7:12))

@@ -1,7 +1,7 @@
 function res=dynamicsPlatform(t,y,u,sp)
 %% Dynamics for a stewart platform
 %%state=[tx ty tz thetax thetay thetaz txd tyd tzd wx wy wz]
-fe=getFe(t,y);
+fe=getFe(t);
 xd=sp.f([y;fe],u);
 
 res=xd;

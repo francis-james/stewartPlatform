@@ -227,13 +227,12 @@ classdef StewartPlatform
           
 %           daspect([1 1 1]);
           arrowEnd=obj.get_R(x(4:6))*x(16:18)+x(1:3);
-          arrowStart=(arrowEnd+x(13:15)*0.05);
+          arrowStart=(arrowEnd-x(13:15))*0.05;
           if not(isequal(x(13:15),[0;0;0]))
               arrowX=[arrowStart(1),arrowEnd(1)];
               arrowY=[arrowStart(2),arrowEnd(2)];
               arrowZ=[arrowStart(3),arrowEnd(3)];
-              arrow3d(arrowX,arrowY,arrowZ,0.8,0.05,0.075,'r');
-%               arrowEnd-arrowStart
+             arrow3d(arrowX,arrowY,arrowZ,0.8,0.05,0.075,'r');
           end
 
           xlim([-1.5 1.5])
